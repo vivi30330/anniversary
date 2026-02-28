@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>Only For You</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #ffb6c1, #ffe4f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Noto Sans TC", sans-serif;
+    }
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      width: 260px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      background: #ff6fa1;
+      color: white;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h3>《進入神奇小空間》</h3>
+  <p>請輸入密碼</p>
+  <input id="pw" type="password" placeholder="密碼">
+  <button onclick="check()">輸入</button>
+</div>
+
+<script>
+function check() {
+  const password = "0828"; // ⭐ 你可以改成你們的紀念日
+  if (document.getElementById("pw").value === password) {
+    window.location.href = "main.html";
+  } else {
+    alert("密碼錯了找死啊 😈");
+  }
+}
+</script>
+
+</body>
+</html>
