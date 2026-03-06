@@ -6,209 +6,199 @@
 <title>兩週年快樂</title>
 
 <style>
+
 *{box-sizing:border-box}
+
 body{
-  margin:0;
-  font-family:"PingFang TC","Noto Sans TC",sans-serif;
-  background:
-    linear-gradient(rgba(255,255,255,0.75),rgba(255,255,255,0.75)),
-    url("bg.jpg") center/contain no-repeat fixed;
+margin:0;
+font-family:"PingFang TC","Noto Sans TC",sans-serif;
+background:
+linear-gradient(rgba(255,255,255,0.75),rgba(255,255,255,0.75)),
+url("bg.jpg") center/contain no-repeat fixed;
 }
 
-audio{display:none}
-
-/* ===== 測驗 ===== */
-#quiz{
-  position:fixed;
-  inset:0;
-  background:rgba(255,255,255,0.96);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:10;
+/* 共用彈窗 */
+.popup{
+position:fixed;
+inset:0;
+background:rgba(255,255,255,0.96);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:10;
 }
 
-.quiz-box{
-  width:90%;
-  max-width:420px;
-  background:#fff;
-  border-radius:18px;
-  padding:24px;
-  text-align:center;
-  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+.box{
+width:90%;
+max-width:420px;
+background:white;
+border-radius:16px;
+padding:24px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
 }
 
-.quiz-box button{
-  width:100%;
-  padding:12px;
-  margin:8px 0;
-  font-size:16px;
-  border-radius:10px;
+.box input{
+width:100%;
+padding:10px;
+font-size:16px;
+margin-top:10px;
 }
 
-/* ===== 主畫面 ===== */
+.box button{
+width:100%;
+padding:12px;
+margin-top:10px;
+font-size:16px;
+}
+
+/* 主畫面 */
+
 #main{
-  display:none;
-  padding:40px 0 120px;
-  text-align:center;
+display:none;
+padding:40px 0 120px;
+text-align:center;
 }
 
 .photos{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
 }
 
 .photo{
-  width:220px;
-  max-width:80vw;
-  margin:14px;
-  perspective:1000px;
+width:220px;
+max-width:80vw;
+margin:14px;
+perspective:1000px;
 }
 
 .card{
-  width:100%;
-  transition:transform .8s;
-  transform-style:preserve-3d;
-  position:relative;
+width:100%;
+transition:transform .8s;
+transform-style:preserve-3d;
+position:relative;
 }
 
 .photo.active .card{
-  transform:rotateY(180deg) scale(1.2);
-  z-index:5;
+transform:rotateY(180deg) scale(1.2);
+z-index:5;
 }
 
 .side{
-  width:100%;
-  backface-visibility:hidden;
-  border-radius:14px;
-  overflow:hidden;
+width:100%;
+backface-visibility:hidden;
+border-radius:14px;
+overflow:hidden;
 }
 
 .front img{
-  width:100%;
-  display:block;
+width:100%;
+display:block;
 }
 
 .back{
-  position:absolute;
-  inset:0;
-  background:#fff;
-  transform:rotateY(180deg);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:16px;
-  font-size:16px;
+position:absolute;
+inset:0;
+background:white;
+transform:rotateY(180deg);
+display:flex;
+justify-content:center;
+align-items:center;
+padding:16px;
+font-size:16px;
 }
 
-/* ===== 底部 ===== */
+/* 底部文字 */
+
 footer{
-  position:fixed;
-  bottom:10px;
-  width:100%;
-  text-align:center;
-  font-size:16px;
-  color:#444;
+position:fixed;
+bottom:10px;
+width:100%;
+text-align:center;
+font-size:16px;
 }
+
 </style>
 </head>
 
 <body>
 
-<audio src="music.mp3" autoplay loop></audio>
+<audio id="bgm" src="music.mp3" loop></audio>
 
-<div id="quiz">
-  <div class="quiz-box">
-    <h2 id="q"></h2>
-    <div id="opts"></div>
-  </div>
+<!-- 密碼 -->
+
+<div id="passwordPage" class="popup">
+<div class="box">
+<h2>輸入密碼</h2>
+<input id="pw" type="password">
+<button onclick="checkPw()">進入</button>
+</div>
 </div>
 
+<!-- 問答 -->
+
+<div id="quiz" class="popup" style="display:none">
+<div class="box">
+<h2 id="q"></h2>
+<div id="opts"></div>
+</div>
+</div>
+
+<!-- 主畫面 -->
+
 <div id="main">
-  <div class="photos" id="photos"></div>
+<div class="photos" id="photos"></div>
 </div>
 
 <footer>兩週年快樂 😈 張張有要續約嗎</footer>
 
 <script>
-/* ===== 問答 ===== */
-const quiz=[
-  {q:"第一次一起過夜的外縣市？",a:["台中","台南","苗栗"],c:1},
-  {q:"99的五專及碩士科系分別是什麼？",a:[
-    "醫檢科/生命科學系-生理組",
-    "醫管科/生命科學系-生理組",
-    "醫檢科/生技醫藥"],c:0},
-  {q:"99的鞋子穿幾號？",a:["23","23.5","22.5"],c:1}
-];
 
-let qi=0;
-const qEl=document.getElementById("q");
-const optEl=document.getElementById("opts");
+/* 密碼 */
+
+const PASSWORD="0828"
+
+function checkPw(){
+
+if(document.getElementById("pw").value===PASSWORD){
+
+document.getElementById("passwordPage").style.display="none"
+document.getElementById("quiz").style.display="flex"
+
+startMusic()
+showQuiz()
+
+}else{
+alert("密碼錯誤")
+}
+
+}
+
+/* 音樂 */
+
+function startMusic(){
+const music=document.getElementById("bgm")
+music.play().catch(()=>{})
+document.body.addEventListener("click",()=>music.play(),{once:true})
+}
+
+/* 問答 */
+
+const quiz=[
+{q:"第一次一起過夜的外縣市？",a:["台中","台南","苗栗"],c:1},
+{q:"99的五專及碩士科系分別是什麼？",a:[
+"醫檢科/生命科學系-生理組",
+"醫管科/生命科學系-生理組",
+"醫檢科/生技醫藥"],c:0},
+{q:"99的鞋子穿幾號？",a:["23","23.5","22.5"],c:1}
+]
+
+let qi=0
 
 function showQuiz(){
-  qEl.textContent=quiz[qi].q;
-  optEl.innerHTML="";
-  quiz[qi].a.forEach((t,i)=>{
-    const b=document.createElement("button");
-    b.textContent=t;
-    b.onclick=()=>{
-      i===quiz[qi].c ? (++qi<quiz.length?showQuiz():startMain()) : alert("你死定了");
-    };
-    optEl.appendChild(b);
-  });
-}
 
-function startMain(){
-  document.getElementById("quiz").style.display="none";
-  document.getElementById("main").style.display="block";
-  loadPhotos();
-}
+const qEl=document.getElementById("q")
+const optEl=document.getElementById("opts")
 
-/* ===== 情話（照順序用，幾張照片就用幾句）===== */
-const loveWords=[
-  "看屁",
-  "一直睡一直睡",
-  "我的珍藏都被你看光光了",
-  "堅持下去✊",
-  "也不是",
-  "多點幾次總會中獎的",
-  "猜錯了",
-  "按看看右邊那張",
-  "哈哈哈哈不是這個 再按看看右邊那張😈",
-  "嗶嗶嗶啵啵 𖤣𖥧𖥣｡𖥧𖧧 <br><br>我要跟你說：<br>不管未來怎樣，我都站在你這邊。"
-];
-
-/* ===== 關鍵：自動偵測有幾張照片 ===== */
-function loadPhotos(){
-  const box=document.getElementById("photos");
-  let i=1;
-
-  function tryLoad(){
-    const img=new Image();
-    img.src=i+".jpg";
-    img.onload=()=>{
-      const p=document.createElement("div");
-      p.className="photo";
-      p.innerHTML=`
-        <div class="card">
-          <div class="side front"><img src="${i}.jpg"></div>
-          <div class="side back">${loveWords[i-1]||""}</div>
-        </div>`;
-      p.onclick=()=>{
-        document.querySelectorAll(".photo").forEach(x=>x.classList.remove("active"));
-        p.classList.add("active");
-      };
-      box.appendChild(p);
-      i++;
-      tryLoad(); // 繼續測下一張
-    };
-  }
-  tryLoad();
-}
-
-showQuiz();
-</script>
-
-</body>
-</html>
+qEl.textContent=
