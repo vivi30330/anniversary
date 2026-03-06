@@ -131,7 +131,7 @@ font-size:16px;
 <div id="passwordPage" class="popup">
 <div class="box">
 <h2>輸入密碼</h2>
-<input id="pw" type="password">
+<input id="pw" type="password" placeholder="輸入密碼" onkeypress="if(event.key==='Enter') checkPw()">
 <button onclick="checkPw()">進入</button>
 </div>
 </div>
@@ -161,16 +161,20 @@ const PASSWORD="0828"
 
 function checkPw(){
 
-if(document.getElementById("pw").value===PASSWORD){
+const input = document.getElementById("pw").value.trim()
 
-document.getElementById("passwordPage").style.display="none"
-document.getElementById("quiz").style.display="flex"
+if(input === PASSWORD){
+
+document.getElementById("passwordPage").style.display = "none"
+document.getElementById("quiz").style.display = "flex"
 
 startMusic()
 showQuiz()
 
 }else{
+
 alert("密碼錯誤")
+
 }
 
 }
