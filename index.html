@@ -10,10 +10,11 @@
 
 body{
 margin:0;
-font-family: "Microsoft JhengHei";
+font-family:"Microsoft JhengHei";
 overflow:hidden;
+
 background:url("B17AA438-737E-43B7-A170-5A848FE84EAA.jpeg");
-background-size:600px;
+background-size:500px;
 background-repeat:repeat;
 background-color:rgba(255,255,255,0.85);
 background-blend-mode:lighten;
@@ -23,16 +24,15 @@ background-blend-mode:lighten;
 
 #passwordPage{
 position:fixed;
-top:0;
-left:0;
 width:100%;
 height:100%;
 display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
-background:#fff;
+background:white;
 z-index:10;
+text-align:center;
 }
 
 input{
@@ -42,8 +42,8 @@ font-size:18px;
 
 button{
 padding:10px 20px;
-font-size:18px;
 margin-top:10px;
+font-size:18px;
 cursor:pointer;
 }
 
@@ -52,8 +52,6 @@ cursor:pointer;
 #quiz{
 display:none;
 position:fixed;
-top:0;
-left:0;
 width:100%;
 height:100%;
 background:white;
@@ -63,93 +61,187 @@ flex-direction:column;
 justify-content:center;
 align-items:center;
 text-align:center;
-padding:20px;
 }
 
 .option{
 margin:10px;
 padding:10px 20px;
-border:1px solid #333;
+border:1px solid black;
 cursor:pointer;
 }
 
-/* 輪播 */
+/* 3D輪播 */
 
 #carousel{
+
 display:none;
+
 position:absolute;
+
 top:50%;
+
 left:50%;
-transform:translate(-50%,-50%);
-width:300px;
-height:300px;
+
 transform-style:preserve-3d;
-animation:rotate 20s linear infinite;
+
+transform:translate(-50%,-50%);
+
+width:300px;
+
+height:300px;
+
+animation:spin 25s linear infinite;
+
 }
 
-@keyframes rotate{
-from{transform:translate(-50%,-50%) rotateY(0deg);}
-to{transform:translate(-50%,-50%) rotateY(360deg);}
+@keyframes spin{
+
+0%{transform:translate(-50%,-50%) rotateY(0)}
+
+100%{transform:translate(-50%,-50%) rotateY(360deg)}
+
 }
 
 .photo{
+
 position:absolute;
+
 width:200px;
+
 height:200px;
+
 left:50px;
+
 top:50px;
+
 cursor:pointer;
+
 }
 
 .photo img{
+
 width:100%;
+
 height:100%;
+
 object-fit:cover;
+
 border-radius:10px;
+
 }
 
-/* 放大照片 */
+/* 照片翻面 */
 
 #viewer{
+
 display:none;
+
 position:fixed;
-top:0;
-left:0;
+
 width:100%;
+
 height:100%;
+
 background:rgba(0,0,0,0.8);
+
 justify-content:center;
+
 align-items:center;
-flex-direction:column;
+
 z-index:20;
+
 }
 
-#viewer img{
+.card{
+
 width:300px;
-border-radius:10px;
+
+height:300px;
+
+position:relative;
+
+transform-style:preserve-3d;
+
+transition:transform 0.8s;
+
 }
 
-/* 情話 */
+.card.flip{
 
-#message{
-margin-top:20px;
-color:white;
+transform:rotateY(180deg);
+
+}
+
+.front,.back{
+
+position:absolute;
+
+width:100%;
+
+height:100%;
+
+backface-visibility:hidden;
+
+border-radius:12px;
+
+overflow:hidden;
+
+}
+
+.front img{
+
+width:100%;
+
+height:100%;
+
+object-fit:cover;
+
+}
+
+.back{
+
+background:white;
+
+transform:rotateY(180deg);
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+padding:20px;
+
 font-size:22px;
+
+text-align:center;
+
 }
 
 /* 愛心 */
 
 .heart{
+
 position:fixed;
+
 top:-50px;
+
+color:#ff6fa5;
+
 font-size:30px;
+
 animation:fall linear forwards;
+
 }
 
 @keyframes fall{
+
 to{
-transform:translateY(110vh);
+
+transform:translateY(110vh) rotate(360deg);
+
 }
+
 }
 
 </style>
@@ -157,16 +249,17 @@ transform:translateY(110vh);
 
 <body>
 
-<!-- 音樂 -->
 <audio autoplay loop>
+
 <source src="music.mp3">
+
 </audio>
 
 <!-- 密碼 -->
 
 <div id="passwordPage">
 
-<h2>輸入密碼</h2>
+<h2>請輸入密碼進入神奇小空間</h2>
 
 <input id="password" type="password">
 
@@ -188,61 +281,59 @@ transform:translateY(110vh);
 
 <div id="carousel">
 
-<div class="photo" style="transform:rotateY(0deg) translateZ(400px)" onclick="showPhoto(1)">
-<img src="1.jpg">
-</div>
+<script>
 
-<div class="photo" style="transform:rotateY(36deg) translateZ(400px)" onclick="showPhoto(2)">
-<img src="2.jpg">
-</div>
+for(let i=1;i<=10;i++){
 
-<div class="photo" style="transform:rotateY(72deg) translateZ(400px)" onclick="showPhoto(3)">
-<img src="3.jpg">
-</div>
+let deg=(i-1)*36;
 
-<div class="photo" style="transform:rotateY(108deg) translateZ(400px)" onclick="showPhoto(4)">
-<img src="4.jpg">
-</div>
+document.write(`
 
-<div class="photo" style="transform:rotateY(144deg) translateZ(400px)" onclick="showPhoto(5)">
-<img src="5.jpg">
-</div>
+<div class="photo"
 
-<div class="photo" style="transform:rotateY(180deg) translateZ(400px)" onclick="showPhoto(6)">
-<img src="6.jpg">
-</div>
+style="transform:rotateY(${deg}deg) translateZ(400px)"
 
-<div class="photo" style="transform:rotateY(216deg) translateZ(400px)" onclick="showPhoto(7)">
-<img src="7.jpg">
-</div>
+onclick="openPhoto(${i})">
 
-<div class="photo" style="transform:rotateY(252deg) translateZ(400px)" onclick="showPhoto(8)">
-<img src="8.jpg">
-</div>
-
-<div class="photo" style="transform:rotateY(288deg) translateZ(400px)" onclick="showPhoto(9)">
-<img src="9.jpg">
-</div>
-
-<div class="photo" style="transform:rotateY(324deg) translateZ(400px)" onclick="showPhoto(10)">
-<img src="10.jpg">
-</div>
+<img src="${i}.jpg">
 
 </div>
 
-<!-- 照片放大 -->
+`);
 
-<div id="viewer" onclick="closeViewer()">
+}
 
-<img id="viewerImg">
+</script>
+
+</div>
+
+<!-- 照片卡片 -->
+
+<div id="viewer" onclick="closeViewer(event)">
+
+<div class="card" id="card">
+
+<div class="front">
+
+<img id="photoImg">
+
+</div>
+
+<div class="back">
 
 <div id="message"></div>
+
+</div>
+
+</div>
 
 </div>
 
 <script>
 
 /* 密碼 */
+
+let wrong=0;
 
 function checkPassword(){
 
@@ -256,7 +347,11 @@ startQuiz();
 
 }else{
 
-alert("密碼錯誤");
+wrong++;
+
+if(wrong==1) alert("給我100塊給你提示");
+
+else alert("你快沒機會了老兄");
 
 }
 
@@ -264,15 +359,15 @@ alert("密碼錯誤");
 
 /* 測驗 */
 
-let quizData=[
+let quiz=[
 
 {
 
 q:"第一次一起過夜的外縣市？",
 
-options:["台中","台南","苗栗"],
+o:["台中","台南","苗栗"],
 
-answer:1
+a:1
 
 },
 
@@ -280,9 +375,9 @@ answer:1
 
 q:"99的五專及碩士科系分別是什麼？",
 
-options:["醫檢科/生命科學系-生理組","醫管科/生命科學系-生理組","醫檢科/生技醫藥"],
+o:["醫檢科/生命科學系-生理組","醫管科/生命科學系-生理組","醫檢科/生技醫藥"],
 
-answer:0
+a:0
 
 },
 
@@ -290,53 +385,51 @@ answer:0
 
 q:"99的鞋子穿幾號？",
 
-options:["23","23.5","22.5"],
+o:["23","23.5","22.5"],
 
-answer:1
+a:1
 
 }
 
 ];
 
-let current=0;
+let qIndex=0;
 
 function startQuiz(){
 
 document.getElementById("quiz").style.display="flex";
 
-showQuestion();
+showQ();
 
 }
 
-function showQuestion(){
+function showQ(){
 
-let q=quizData[current];
+let q=quiz[qIndex];
 
 document.getElementById("question").innerText=q.q;
 
-let optionsHTML="";
+let html="";
 
-q.options.forEach((o,i)=>{
+q.o.forEach((t,i)=>{
 
-optionsHTML+=`<div class="option" onclick="answer(${i})">${o}</div>`;
+html+=`<div class="option" onclick="answer(${i})">${t}</div>`;
 
 });
 
-document.getElementById("options").innerHTML=optionsHTML;
+document.getElementById("options").innerHTML=html;
 
 }
 
 function answer(i){
 
-if(i===quizData[current].answer){
+if(i==quiz[qIndex].a){
 
-current++;
+qIndex++;
 
-if(current<quizData.length){
+if(qIndex<quiz.length) showQ();
 
-showQuestion();
-
-}else{
+else{
 
 document.getElementById("quiz").style.display="none";
 
@@ -354,7 +447,7 @@ alert("你死定了");
 
 /* 情話 */
 
-let messages=[
+let words=[
 
 "看屁",
 
@@ -378,47 +471,59 @@ let messages=[
 
 ];
 
-function showPhoto(n){
+function openPhoto(n){
 
 document.getElementById("viewer").style.display="flex";
 
-document.getElementById("viewerImg").src=n+".jpg";
+document.getElementById("photoImg").src=n+".jpg";
 
-document.getElementById("message").innerText=messages[n-1];
+document.getElementById("message").innerText=words[n-1];
+
+setTimeout(()=>{
+
+document.getElementById("card").classList.add("flip");
+
+},300);
 
 }
 
-function closeViewer(){
+function closeViewer(e){
+
+if(e.target.id==="viewer"){
 
 document.getElementById("viewer").style.display="none";
+
+document.getElementById("card").classList.remove("flip");
+
+}
 
 }
 
 /* 愛心 */
 
-function createHeart(){
+function heart(){
 
-let heart=document.createElement("div");
+let h=document.createElement("div");
 
-heart.className="heart";
+h.className="heart";
 
-heart.innerText="♡";
+h.innerHTML="❤";
 
-heart.style.left=Math.random()*100+"vw";
+h.style.left=Math.random()*100+"vw";
 
-heart.style.fontSize=(20+Math.random()*30)+"px";
+h.style.fontSize=(20+Math.random()*40)+"px";
 
-heart.style.color=Math.random()>0.5?"#ff8fb1":"#ff5c8a";
+h.style.animationDuration=(4+Math.random()*4)+"s";
 
-heart.style.animationDuration=(4+Math.random()*4)+"s";
+h.style.transform=`rotate(${Math.random()*360}deg)`;
 
-document.body.appendChild(heart);
+document.body.appendChild(h);
 
-setTimeout(()=>heart.remove(),8000);
+setTimeout(()=>h.remove(),8000);
 
 }
 
-setInterval(createHeart,300);
+setInterval(heart,300);
 
 </script>
 
