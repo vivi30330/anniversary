@@ -13,8 +13,10 @@ margin:0;
 font-family:"Microsoft JhengHei";
 overflow:hidden;
 
+/* 回憶錄背景 */
+
 background:url("B17AA438-737E-43B7-A170-5A848FE84EAA.jpeg");
-background-size:500px;
+background-size:450px;
 background-repeat:repeat;
 background-color:rgba(255,255,255,0.85);
 background-blend-mode:lighten;
@@ -70,178 +72,119 @@ border:1px solid black;
 cursor:pointer;
 }
 
-/* 3D輪播 */
+/* 輪播 */
 
 #carousel{
-
 display:none;
-
 position:absolute;
-
 top:50%;
-
 left:50%;
-
 transform-style:preserve-3d;
-
 transform:translate(-50%,-50%);
-
 width:300px;
-
 height:300px;
-
 animation:spin 25s linear infinite;
-
 }
 
 @keyframes spin{
-
 0%{transform:translate(-50%,-50%) rotateY(0)}
-
 100%{transform:translate(-50%,-50%) rotateY(360deg)}
-
 }
 
 .photo{
-
 position:absolute;
-
 width:200px;
-
 height:200px;
-
 left:50px;
-
 top:50px;
-
 cursor:pointer;
-
 }
 
 .photo img{
-
 width:100%;
-
 height:100%;
-
 object-fit:cover;
-
 border-radius:10px;
-
 }
 
-/* 照片翻面 */
+/* 照片卡片翻面 */
 
 #viewer{
-
 display:none;
-
 position:fixed;
-
 width:100%;
-
 height:100%;
-
 background:rgba(0,0,0,0.8);
-
 justify-content:center;
-
 align-items:center;
-
 z-index:20;
-
 }
 
 .card{
-
 width:300px;
-
 height:300px;
-
 position:relative;
-
 transform-style:preserve-3d;
-
 transition:transform 0.8s;
-
 }
 
 .card.flip{
-
 transform:rotateY(180deg);
-
 }
 
 .front,.back{
-
 position:absolute;
-
 width:100%;
-
 height:100%;
-
 backface-visibility:hidden;
-
 border-radius:12px;
-
 overflow:hidden;
-
 }
 
 .front img{
-
 width:100%;
-
 height:100%;
-
 object-fit:cover;
-
 }
 
 .back{
-
 background:white;
-
 transform:rotateY(180deg);
-
 display:flex;
-
 justify-content:center;
-
 align-items:center;
-
 padding:20px;
-
 font-size:22px;
-
 text-align:center;
-
 }
 
 /* 愛心 */
 
 .heart{
-
 position:fixed;
-
 top:-50px;
-
 color:#ff6fa5;
-
-font-size:30px;
-
+opacity:0.5;
+pointer-events:none;
 animation:fall linear forwards;
-
 }
 
 @keyframes fall{
-
 to{
-
 transform:translateY(110vh) rotate(360deg);
-
+}
 }
 
+/* 打字機 */
+
+#typing{
+position:fixed;
+bottom:20px;
+width:100%;
+text-align:center;
+font-size:28px;
+font-weight:bold;
+color:#ff4f87;
 }
 
 </style>
@@ -250,9 +193,7 @@ transform:translateY(110vh) rotate(360deg);
 <body>
 
 <audio autoplay loop>
-
 <source src="music.mp3">
-
 </audio>
 
 <!-- 密碼 -->
@@ -290,9 +231,7 @@ let deg=(i-1)*36;
 document.write(`
 
 <div class="photo"
-
 style="transform:rotateY(${deg}deg) translateZ(400px)"
-
 onclick="openPhoto(${i})">
 
 <img src="${i}.jpg">
@@ -307,27 +246,27 @@ onclick="openPhoto(${i})">
 
 </div>
 
-<!-- 照片卡片 -->
+<!-- 照片 -->
 
 <div id="viewer" onclick="closeViewer(event)">
 
 <div class="card" id="card">
 
 <div class="front">
-
 <img id="photoImg">
-
 </div>
 
 <div class="back">
-
 <div id="message"></div>
-
 </div>
 
 </div>
 
 </div>
+
+<!-- 打字機 -->
+
+<div id="typing"></div>
 
 <script>
 
@@ -350,7 +289,6 @@ startQuiz();
 wrong++;
 
 if(wrong==1) alert("給我100塊給你提示");
-
 else alert("你快沒機會了老兄");
 
 }
@@ -362,38 +300,26 @@ else alert("你快沒機會了老兄");
 let quiz=[
 
 {
-
 q:"第一次一起過夜的外縣市？",
-
 o:["台中","台南","苗栗"],
-
 a:1
-
 },
 
 {
-
 q:"99的五專及碩士科系分別是什麼？",
-
 o:["醫檢科/生命科學系-生理組","醫管科/生命科學系-生理組","醫檢科/生技醫藥"],
-
 a:0
-
 },
 
 {
-
 q:"99的鞋子穿幾號？",
-
 o:["23","23.5","22.5"],
-
 a:1
-
 }
 
 ];
 
-let qIndex=0;
+let qi=0;
 
 function startQuiz(){
 
@@ -405,7 +331,7 @@ showQ();
 
 function showQ(){
 
-let q=quiz[qIndex];
+let q=quiz[qi];
 
 document.getElementById("question").innerText=q.q;
 
@@ -423,17 +349,19 @@ document.getElementById("options").innerHTML=html;
 
 function answer(i){
 
-if(i==quiz[qIndex].a){
+if(i==quiz[qi].a){
 
-qIndex++;
+qi++;
 
-if(qIndex<quiz.length) showQ();
+if(qi<quiz.length) showQ();
 
 else{
 
 document.getElementById("quiz").style.display="none";
 
 document.getElementById("carousel").style.display="block";
+
+startTyping();
 
 }
 
@@ -448,27 +376,16 @@ alert("你死定了");
 /* 情話 */
 
 let words=[
-
 "看屁",
-
 "一直睡一直睡",
-
 "我的珍藏都被你看光光了",
-
 "堅持下去✊",
-
 "也不是",
-
 "多點幾次總會中獎的",
-
 "猜錯了",
-
 "按看看右邊那張",
-
 "哈哈哈哈不是這個 再按看看右邊那張😈",
-
 "嗶嗶嗶啵啵 𖤣𖥧𖥣｡𖥧𖧧"
-
 ];
 
 function openPhoto(n){
@@ -511,19 +428,44 @@ h.innerHTML="❤";
 
 h.style.left=Math.random()*100+"vw";
 
-h.style.fontSize=(20+Math.random()*40)+"px";
+h.style.fontSize=(18+Math.random()*30)+"px";
 
-h.style.animationDuration=(4+Math.random()*4)+"s";
+h.style.animationDuration=(5+Math.random()*4)+"s";
 
 h.style.transform=`rotate(${Math.random()*360}deg)`;
 
 document.body.appendChild(h);
 
-setTimeout(()=>h.remove(),8000);
+setTimeout(()=>h.remove(),9000);
 
 }
 
-setInterval(heart,300);
+setInterval(heart,900);
+
+/* 打字機 */
+
+let text="兩週年快樂😈 張張有要續約嗎";
+let i=0;
+
+function startTyping(){
+
+function type(){
+
+if(i<text.length){
+
+document.getElementById("typing").innerHTML+=text.charAt(i);
+
+i++;
+
+setTimeout(type,120);
+
+}
+
+}
+
+type();
+
+}
 
 </script>
 
