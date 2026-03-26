@@ -13,8 +13,6 @@ margin:0;
 font-family:"Microsoft JhengHei";
 overflow:hidden;
 
-/* 背景 */
-
 background:url("B17AA438-737E-43B7-A170-5A848FE84EAA.jpeg");
 background-size:500px;
 background-repeat:repeat;
@@ -42,20 +40,6 @@ background-blend-mode:lighten;
 z-index:10;
 }
 
-/* 輸入 */
-
-input{
-padding:10px;
-font-size:18px;
-}
-
-button{
-padding:10px 20px;
-margin-top:10px;
-font-size:18px;
-cursor:pointer;
-}
-
 /* 測驗 */
 
 #quiz{
@@ -63,8 +47,14 @@ display:none;
 position:fixed;
 width:100%;
 height:100%;
-background:white;
 z-index:9;
+
+background:url("B17AA438-737E-43B7-A170-5A848FE84EAA.jpeg");
+background-size:500px;
+background-repeat:repeat;
+background-color:rgba(255,255,255,0.9);
+background-blend-mode:lighten;
+
 display:flex;
 flex-direction:column;
 justify-content:center;
@@ -76,9 +66,10 @@ margin:10px;
 padding:10px 20px;
 border:1px solid black;
 cursor:pointer;
+background:white;
 }
 
-/* 3D輪播 */
+/* 桌機3D */
 
 #carousel{
 display:none;
@@ -89,8 +80,7 @@ transform-style:preserve-3d;
 transform:translate(-50%,-50%);
 width:300px;
 height:400px;
-
-animation:spin 40s linear infinite;
+animation:spin 60s linear infinite;
 }
 
 @keyframes spin{
@@ -98,14 +88,12 @@ animation:spin 40s linear infinite;
 100%{transform:translate(-50%,-50%) rotateY(360deg)}
 }
 
-/* 長方形照片 */
-
 .photo{
 position:absolute;
-width:180px;
-height:240px;
-left:60px;
-top:80px;
+width:140px;
+height:190px;
+left:80px;
+top:100px;
 cursor:pointer;
 }
 
@@ -116,7 +104,30 @@ object-fit:cover;
 border-radius:10px;
 }
 
-/* 翻面 */
+/* 手機滑動 */
+
+#slider{
+display:none;
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+width:100%;
+overflow-x:auto;
+white-space:nowrap;
+}
+
+.slide{
+display:inline-block;
+width:70%;
+margin:0 15%;
+}
+
+.slide img{
+width:100%;
+border-radius:12px;
+}
+
+/* 翻面卡片 */
 
 #viewer{
 display:none;
@@ -132,7 +143,6 @@ z-index:20;
 .card{
 width:260px;
 height:340px;
-position:relative;
 transform-style:preserve-3d;
 transition:transform 0.8s;
 }
@@ -164,7 +174,6 @@ justify-content:center;
 align-items:center;
 padding:20px;
 font-size:20px;
-text-align:center;
 }
 
 /* 愛心 */
@@ -172,7 +181,6 @@ text-align:center;
 .heart{
 position:fixed;
 top:-50px;
-color:#ff6fa5;
 opacity:0.5;
 pointer-events:none;
 animation:fall linear forwards;
@@ -195,12 +203,28 @@ font-size:24px;
 color:#ff4f87;
 }
 
+/* 手機切換 */
+
+@media (max-width:768px){
+
+#carousel{display:none;}
+#slider{display:block;}
+
+}
+
+@media (min-width:769px){
+
+#carousel{display:block;}
+#slider{display:none;}
+
+}
+
 </style>
 </head>
 
 <body>
 
-<audio autoplay loop>
+<audio id="bgm" loop>
 <source src="music.mp3">
 </audio>
 
@@ -219,9 +243,13 @@ color:#ff4f87;
 <div id="options"></div>
 </div>
 
-<!-- 輪播 -->
+<!-- 桌機輪播 -->
 
 <div id="carousel"></div>
+
+<!-- 手機滑動 -->
+
+<div id="slider"></div>
 
 <!-- 卡片 -->
 
@@ -243,19 +271,33 @@ color:#ff4f87;
 
 <script>
 
-/* 生成20張 */
+/* 音樂 */
+
+function startMusic(){
+let m=document.getElementById("bgm");
+m.play().catch(()=>{});
+document.body.addEventListener("click",()=>m.play(),{once:true});
+}
+
+/* 生成照片 */
 
 for(let i=1;i<=20;i++){
 
+// 桌機
 let deg=(i-1)*(360/20);
 
 document.getElementById("carousel").innerHTML+=`
 <div class="photo"
-style="transform:rotateY(${deg}deg) translateZ(600px)"
+style="transform:rotateY(${deg}deg) translateZ(350px)"
 onclick="openPhoto(${i})">
 <img src="${i}.jpg">
-</div>
-`;
+</div>`;
+
+// 手機
+document.getElementById("slider").innerHTML+=`
+<div class="slide" onclick="openPhoto(${i})">
+<img src="${i}.jpg">
+</div>`;
 
 }
 
@@ -265,17 +307,15 @@ let wrong=0;
 
 function checkPassword(){
 
-let p=document.getElementById("password").value;
-
-if(p==="0828"){
+if(document.getElementById("password").value==="0828"){
 
 document.getElementById("passwordPage").style.display="none";
+startMusic();
 startQuiz();
 
 }else{
 
 wrong++;
-
 if(wrong==1) alert("給我100塊給你提示");
 else alert("你快沒機會了老兄");
 
@@ -286,13 +326,9 @@ else alert("你快沒機會了老兄");
 /* 測驗 */
 
 let quiz=[
-
 {q:"第一次一起過夜的外縣市？",o:["台中","台南","苗栗"],a:1},
-
 {q:"99的五專及碩士科系分別是什麼？",o:["醫檢科/生命科學系-生理組","醫管科/生命科學系-生理組","醫檢科/生技醫藥"],a:0},
-
 {q:"99的鞋子穿幾號？",o:["23","23.5","22.5"],a:1}
-
 ];
 
 let qi=0;
@@ -308,7 +344,6 @@ let q=quiz[qi];
 document.getElementById("question").innerText=q.q;
 
 let html="";
-
 q.o.forEach((t,i)=>{
 html+=`<div class="option" onclick="answer(${i})">${t}</div>`;
 });
@@ -322,11 +357,9 @@ function answer(i){
 if(i==quiz[qi].a){
 
 qi++;
-
 if(qi<quiz.length) showQ();
 else{
 document.getElementById("quiz").style.display="none";
-document.getElementById("carousel").style.display="block";
 startTyping();
 }
 
@@ -341,13 +374,10 @@ alert("你死定了");
 /* 情話 */
 
 let words=[
-
 "看屁","一直睡一直睡","我的珍藏都被你看光光了","堅持下去✊","也不是",
 "多點幾次總會中獎的","猜錯了","按看看右邊那張","哈哈哈哈不是這個 再按看看右邊那張😈","嗶嗶嗶啵啵",
-
 "你很可愛","我也很愛你","再一起久一點好不好","你逃不掉了","這張很好笑",
 "想你","親一下","抱一下","你是我的","完蛋我又愛你了"
-
 ];
 
 function openPhoto(n){
@@ -371,27 +401,18 @@ document.getElementById("card").classList.remove("flip");
 
 }
 
-/* 愛心（減少密度） */
+/* 愛心 */
 
-function heart(){
-
+setInterval(()=>{
 let h=document.createElement("div");
-
 h.className="heart";
 h.innerHTML="❤";
-
 h.style.left=Math.random()*100+"vw";
 h.style.fontSize=(15+Math.random()*25)+"px";
 h.style.animationDuration=(6+Math.random()*5)+"s";
-h.style.transform=`rotate(${Math.random()*360}deg)`;
-
 document.body.appendChild(h);
-
-setTimeout(()=>h.remove(),10000);
-
-}
-
-setInterval(heart,1500);
+setTimeout(()=>h.remove(),9000);
+},1500);
 
 /* 打字機 */
 
