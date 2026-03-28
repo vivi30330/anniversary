@@ -3,17 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>兩週年快樂</title>
 
 <style>
+
 body{
 margin:0;
 font-family:"Microsoft JhengHei";
 overflow:hidden;
-background:#ffeef2;
+
+/* 回憶錄背景（這次不會壞） */
+background-image:url("B17AA438-737E-43B7-A170-5A848FE84EAA.jpeg");
+background-size:400px;
+background-repeat:repeat;
+background-color:#fff0f5;
+}
+
+/* 半透明覆蓋（讓字看得清楚） */
+body::before{
+content:"";
+position:fixed;
+width:100%;
+height:100%;
+background:rgba(255,255,255,0.7);
+z-index:-1;
 }
 
 /* 密碼頁 */
+
 #passwordPage{
 position:fixed;
 width:100%;
@@ -22,17 +40,17 @@ display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
-background:#ffeef2;
 z-index:10;
 }
 
 /* 測驗 */
+
 #quiz{
 display:none;
 position:fixed;
 width:100%;
 height:100%;
-background:#fff0f5;
+display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
@@ -48,6 +66,7 @@ cursor:pointer;
 }
 
 /* 輪播 */
+
 #carousel{
 display:none;
 position:absolute;
@@ -55,7 +74,7 @@ top:50%;
 left:50%;
 transform-style:preserve-3d;
 transform:translate(-50%,-50%);
-animation:spin 80s linear infinite;
+animation:spin 90s linear infinite;
 }
 
 @keyframes spin{
@@ -90,6 +109,7 @@ border-radius:10px;
 }
 
 /* 卡片 */
+
 #viewer{
 display:none;
 position:fixed;
@@ -135,6 +155,7 @@ padding:20px;
 }
 
 /* 打字機 */
+
 #typing{
 position:fixed;
 bottom:20px;
@@ -153,18 +174,26 @@ color:#ff4f87;
 <source src="music.mp3">
 </audio>
 
+<!-- 密碼 -->
+
 <div id="passwordPage">
 <h2>請輸入密碼進入神奇小空間</h2>
 <input id="password">
 <button onclick="enter()">進入</button>
 </div>
 
+<!-- 測驗 -->
+
 <div id="quiz">
 <h2 id="question"></h2>
 <div id="options"></div>
 </div>
 
+<!-- 輪播 -->
+
 <div id="carousel"></div>
+
+<!-- 卡片 -->
 
 <div id="viewer" onclick="closeViewer(event)">
 <div class="card" id="card">
@@ -178,6 +207,7 @@ color:#ff4f87;
 <script>
 
 /* 音樂 */
+
 function playMusic(){
 let m=document.getElementById("bgm");
 m.play().catch(()=>{});
@@ -185,6 +215,7 @@ document.body.addEventListener("click",()=>m.play(),{once:true});
 }
 
 /* 進入 */
+
 function enter(){
 let p=document.getElementById("password").value;
 
@@ -198,6 +229,7 @@ alert("密碼錯誤");
 }
 
 /* 測驗 */
+
 let quiz=[
 {q:"第一次一起過夜的外縣市？",o:["台中","台南","苗栗"],a:1},
 {q:"99的五專及碩士科系分別是什麼？",o:["醫檢科/生命科學系-生理組","醫管科/生命科學系-生理組","醫檢科/生技醫藥"],a:0},
@@ -207,8 +239,7 @@ let quiz=[
 let qi=0;
 
 function startQuiz(){
-let q=document.getElementById("quiz");
-q.style.display="flex";
+document.getElementById("quiz").style.display="flex";
 showQ();
 }
 
@@ -239,6 +270,7 @@ alert("你死定了");
 }
 
 /* 輪播 */
+
 function startCarousel(){
 
 let c=document.getElementById("carousel");
@@ -247,6 +279,7 @@ c.style.display="block";
 let radius=window.innerWidth<768?160:300;
 
 for(let i=1;i<=20;i++){
+
 let deg=(i-1)*(360/20);
 
 let div=document.createElement("div");
@@ -255,13 +288,16 @@ div.style.transform=`rotateY(${deg}deg) translateZ(${radius}px)`;
 div.onclick=()=>openPhoto(i);
 
 div.innerHTML=`<img src="${i}.jpg">`;
+
 c.appendChild(div);
+
 }
 
 }
 
 /* 情話 */
-let words=["看屁","一直睡一直睡","我的珍藏都被你看光光了","堅持下去✊","也不是","多點幾次總會中獎的","猜錯了","按看看右邊那張","哈哈哈哈不是這個 再按看看右邊那張😈","嗶嗶嗶啵啵"];
+
+let words=["看屁","一直睡一直睡","我的珍藏都被你看光光了","看屁","看屁","好可愛哦","猜錯了","按看看右邊那張","哈哈哈哈不是這個 再按看看右邊那張😈","嗶嗶嗶啵啵"];
 
 function openPhoto(n){
 document.getElementById("viewer").style.display="flex";
@@ -281,6 +317,7 @@ document.getElementById("card").classList.remove("flip");
 }
 
 /* 打字機 */
+
 let text="兩週年快樂張張 很開心我們又一起度過了一個年頭 請多多指教摟";
 let ti=0;
 
@@ -296,6 +333,7 @@ t();
 }
 
 /* 景深 */
+
 setInterval(()=>{
 let ps=document.querySelectorAll(".photo");
 ps.forEach(p=>p.classList.remove("active"));
