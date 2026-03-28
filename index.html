@@ -3,24 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>兩週年快樂</title>
 
 <style>
-
 body{
 margin:0;
 font-family:"Microsoft JhengHei";
 overflow:hidden;
-background:url("B17AA438-737E-43B7-A170-5A848FE84EAA.jpeg");
-background-size:500px;
-background-repeat:repeat;
-background-color:rgba(255,255,255,0.85);
-background-blend-mode:lighten;
+background:#ffeef2;
 }
 
 /* 密碼頁 */
-
 #passwordPage{
 position:fixed;
 width:100%;
@@ -29,36 +22,21 @@ display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
-background:url("B17AA438-737E-43B7-A170-5A848FE84EAA.jpeg");
-background-size:500px;
-background-repeat:repeat;
-background-color:rgba(255,255,255,0.9);
-background-blend-mode:lighten;
+background:#ffeef2;
 z-index:10;
 }
 
 /* 測驗 */
-
 #quiz{
 display:none;
 position:fixed;
 width:100%;
 height:100%;
-z-index:9;
-background:url("B17AA438-737E-43B7-A170-5A848FE84EAA.jpeg");
-background-size:500px;
-background-repeat:repeat;
-background-color:rgba(255,255,255,0.9);
-background-blend-mode:lighten;
+background:#fff0f5;
 justify-content:center;
 align-items:center;
 flex-direction:column;
-}
-
-/* ⭐ 重點：結束後完全消失 */
-#quiz.hide{
-display:none !important;
-pointer-events:none;
+z-index:9;
 }
 
 .option{
@@ -70,7 +48,6 @@ cursor:pointer;
 }
 
 /* 輪播 */
-
 #carousel{
 display:none;
 position:absolute;
@@ -78,7 +55,7 @@ top:50%;
 left:50%;
 transform-style:preserve-3d;
 transform:translate(-50%,-50%);
-animation:spin 100s linear infinite;
+animation:spin 80s linear infinite;
 }
 
 @keyframes spin{
@@ -101,7 +78,7 @@ transition:0.5s;
 .photo.active{
 opacity:1;
 filter:blur(0);
-transform:scale(1.2) !important;
+transform:scale(1.2);
 z-index:2;
 }
 
@@ -113,7 +90,6 @@ border-radius:10px;
 }
 
 /* 卡片 */
-
 #viewer{
 display:none;
 position:fixed;
@@ -141,8 +117,6 @@ position:absolute;
 width:100%;
 height:100%;
 backface-visibility:hidden;
-border-radius:12px;
-overflow:hidden;
 }
 
 .front img{
@@ -158,27 +132,9 @@ display:flex;
 justify-content:center;
 align-items:center;
 padding:20px;
-font-size:18px;
-}
-
-/* 愛心 */
-
-.heart{
-position:fixed;
-top:-50px;
-opacity:0.5;
-pointer-events:none;
-animation:fall linear forwards;
-}
-
-@keyframes fall{
-to{
-transform:translateY(110vh) rotate(360deg);
-}
 }
 
 /* 打字機 */
-
 #typing{
 position:fixed;
 bottom:20px;
@@ -199,8 +155,8 @@ color:#ff4f87;
 
 <div id="passwordPage">
 <h2>請輸入密碼進入神奇小空間</h2>
-<input id="password" type="password">
-<button onclick="checkPassword()">進入</button>
+<input id="password">
+<button onclick="enter()">進入</button>
 </div>
 
 <div id="quiz">
@@ -222,51 +178,26 @@ color:#ff4f87;
 <script>
 
 /* 音樂 */
-
-function startMusic(){
+function playMusic(){
 let m=document.getElementById("bgm");
 m.play().catch(()=>{});
 document.body.addEventListener("click",()=>m.play(),{once:true});
 }
 
-/* 生成照片 */
+/* 進入 */
+function enter(){
+let p=document.getElementById("password").value;
 
-let radius = window.innerWidth < 768 ? 160 : 350;
-
-for(let i=1;i<=20;i++){
-let deg=(i-1)*(360/20);
-document.getElementById("carousel").innerHTML+=`
-<div class="photo"
-style="transform:rotateY(${deg}deg) translateZ(${radius}px)"
-onclick="openPhoto(${i})">
-<img src="${i}.jpg">
-</div>`;
-}
-
-/* 密碼 */
-
-let wrong=0;
-
-function checkPassword(){
-
-if(document.getElementById("password").value==="0828"){
-
+if(p==="0828"){
 document.getElementById("passwordPage").style.display="none";
-startMusic();
+playMusic();
 startQuiz();
-
 }else{
-
-wrong++;
-if(wrong==1) alert("給我100塊給你提示");
-else alert("你快沒機會了老兄");
-
+alert("密碼錯誤");
 }
-
 }
 
 /* 測驗 */
-
 let quiz=[
 {q:"第一次一起過夜的外縣市？",o:["台中","台南","苗栗"],a:1},
 {q:"99的五專及碩士科系分別是什麼？",o:["醫檢科/生命科學系-生理組","醫管科/生命科學系-生理組","醫檢科/生技醫藥"],a:0},
@@ -276,7 +207,8 @@ let quiz=[
 let qi=0;
 
 function startQuiz(){
-document.getElementById("quiz").style.display="flex";
+let q=document.getElementById("quiz");
+q.style.display="flex";
 showQ();
 }
 
@@ -285,108 +217,92 @@ let q=quiz[qi];
 document.getElementById("question").innerText=q.q;
 
 let html="";
-q.o.forEach((t,i)=>{
-html+=`<div class="option" onclick="answer(${i})">${t}</div>`;
-});
-
+for(let i=0;i<q.o.length;i++){
+html+=`<div class="option" onclick="answer(${i})">${q.o[i]}</div>`;
+}
 document.getElementById("options").innerHTML=html;
 }
 
 function answer(i){
-
-if(i==quiz[qi].a){
-
+if(i===quiz[qi].a){
 qi++;
-
 if(qi<quiz.length){
 showQ();
 }else{
-
-/* ⭐ 真正移除測驗 */
-
-document.getElementById("quiz").classList.add("hide");
-document.getElementById("carousel").style.display="block";
-
+document.getElementById("quiz").style.display="none";
+startCarousel();
 startTyping();
-
 }
-
 }else{
 alert("你死定了");
+}
+}
+
+/* 輪播 */
+function startCarousel(){
+
+let c=document.getElementById("carousel");
+c.style.display="block";
+
+let radius=window.innerWidth<768?160:300;
+
+for(let i=1;i<=20;i++){
+let deg=(i-1)*(360/20);
+
+let div=document.createElement("div");
+div.className="photo";
+div.style.transform=`rotateY(${deg}deg) translateZ(${radius}px)`;
+div.onclick=()=>openPhoto(i);
+
+div.innerHTML=`<img src="${i}.jpg">`;
+c.appendChild(div);
 }
 
 }
 
 /* 情話 */
-
-let words=[
-
-看屁","一直睡一直睡","我的珍藏都被你看光光了","左邊那張看看","右邊那張點看看",
-"看屁","雞雞好吃","按看看右邊那張","哈哈哈哈不是這個 再按看看右邊那張😈","嗶嗶嗶啵啵",
-"我拔拔好可愛哦","好吃","吃雞雞","點旁邊那張看看","看屁",
-"看屁","看屁","看屁","吃雞雞","看屁"
-
-];
+let words=["看屁","一直睡一直睡","我的珍藏都被你看光光了","堅持下去✊","也不是","多點幾次總會中獎的","猜錯了","按看看右邊那張","哈哈哈哈不是這個 再按看看右邊那張😈","嗶嗶嗶啵啵"];
 
 function openPhoto(n){
-
 document.getElementById("viewer").style.display="flex";
 document.getElementById("photoImg").src=n+".jpg";
-document.getElementById("message").innerText=words[n-1];
+document.getElementById("message").innerText=words[n-1]||"❤️";
 
 setTimeout(()=>{
 document.getElementById("card").classList.add("flip");
 },300);
-
 }
 
 function closeViewer(e){
-
 if(e.target.id==="viewer"){
 document.getElementById("viewer").style.display="none";
 document.getElementById("card").classList.remove("flip");
 }
-
 }
-
-/* 愛心 */
-
-setInterval(()=>{
-let h=document.createElement("div");
-h.className="heart";
-h.innerHTML="❤";
-h.style.left=Math.random()*100+"vw";
-h.style.fontSize=(15+Math.random()*25)+"px";
-h.style.animationDuration=(6+Math.random()*5)+"s";
-document.body.appendChild(h);
-setTimeout(()=>h.remove(),9000);
-},1500);
 
 /* 打字機 */
-
 let text="兩週年快樂張張 很開心我們又一起度過了一個年頭 請多多指教摟";
-let i=0;
+let ti=0;
 
 function startTyping(){
-function type(){
-if(i<text.length){
-document.getElementById("typing").innerHTML+=text.charAt(i);
-i++;
-setTimeout(type,120);
+function t(){
+if(ti<text.length){
+document.getElementById("typing").innerHTML+=text[ti];
+ti++;
+setTimeout(t,100);
 }
 }
-type();
+t();
 }
 
 /* 景深 */
-
 setInterval(()=>{
-let photos=document.querySelectorAll(".photo");
-photos.forEach(p=>p.classList.remove("active"));
+let ps=document.querySelectorAll(".photo");
+ps.forEach(p=>p.classList.remove("active"));
 
-photos.forEach(p=>{
-let rect=p.getBoundingClientRect();
-if(rect.left > window.innerWidth*0.3 && rect.left < window.innerWidth*0.7){
+ps.forEach(p=>{
+let r=p.getBoundingClientRect();
+if(r.left>window.innerWidth*0.3 && r.left<window.innerWidth*0.7){
 p.classList.add("active");
 }
 });
