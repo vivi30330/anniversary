@@ -6,7 +6,6 @@
 
 <title>兩週年快樂</title>
 
-<!-- 💗 可愛字體 -->
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
 
 <style>
@@ -20,10 +19,6 @@ background-size:400px;
 background-repeat:repeat;
 background-color:#fff0f5;
 }
-
-/* 淡入 */
-body{animation:fadeIn 1.5s ease;}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
 /* 密碼 */
 #passwordPage{
@@ -59,7 +54,7 @@ border:1px solid black;
 cursor:pointer;
 }
 
-/* 手機滑動 */
+/* 手機 */
 #mobileSlider{
 display:none;
 position:absolute;
@@ -116,7 +111,7 @@ object-fit:cover;
 border-radius:10px;
 }
 
-/* 背景變暗 */
+/* 遮罩（不擋點擊） */
 #overlay{
 position:fixed;
 width:100%;
@@ -124,10 +119,13 @@ height:100%;
 background:rgba(0,0,0,0.6);
 opacity:0;
 transition:0.5s;
-pointer-events:none;
+pointer-events:none; /* 🔥關鍵 */
 z-index:15;
 }
-#overlay.show{opacity:1;}
+
+#overlay.show{
+opacity:1;
+}
 
 /* 卡片 */
 #viewer{
@@ -147,7 +145,9 @@ transform-style:preserve-3d;
 transition:0.8s;
 }
 
-.card.flip{transform:rotateY(180deg);}
+.card.flip{
+transform:rotateY(180deg);
+}
 
 .front,.back{
 position:absolute;
@@ -174,7 +174,7 @@ padding:20px;
 text-align:center;
 }
 
-/* ✨ 可愛打字機 */
+/* 打字機 */
 #typing{
 position:fixed;
 bottom:20px;
@@ -183,8 +183,15 @@ left:5%;
 text-align:center;
 font-size:20px;
 color:#ff4f87;
-line-height:1.6;
 font-family:'ZCOOL KuaiLe', cursive;
+}
+
+/* 💗 愛心（不擋點擊） */
+.heart{
+position:fixed;
+top:-20px;
+pointer-events:none; /* 🔥最重要 */
+z-index:1;
 }
 
 </style>
@@ -223,10 +230,9 @@ font-family:'ZCOOL KuaiLe', cursive;
 
 <script>
 
-/* 🎵 音樂 */
+/* 音樂 */
 function playMusic(){
-let m=document.getElementById("bgm");
-m.play().catch(()=>{});
+document.getElementById("bgm").play().catch(()=>{});
 }
 
 /* 密碼 */
@@ -246,6 +252,7 @@ let quiz=[
 {q:"99的五專及碩士科系分別是什麼？",o:["醫檢科/生命科學系-生理組","醫管科/生命科學系-生理組","醫檢科/生技醫藥"],a:0},
 {q:"99的鞋子穿幾號？",o:["23","23.5","22.5"],a:1}
 ];
+
 let qi=0;
 
 function startQuiz(){
@@ -276,12 +283,6 @@ start();
 }else{
 alert("你死定了");
 }
-}
-
-/* 🚀 預載圖片（加速） */
-for(let i=1;i<=20;i++){
-let img=new Image();
-img.src=i+".jpg";
 }
 
 /* 啟動 */
@@ -318,12 +319,7 @@ startTyping();
 }
 
 /* 情話 */
-let words=[
-看屁","一直睡一直睡","我的珍藏都被你看光光了","左邊那張看看","右邊那張點看看",
-"看屁","雞雞好吃","按看看右邊那張","哈哈哈哈不是這個 再按看看右邊那張😈","嗶嗶嗶啵啵",
-"我拔拔好可愛哦","好吃","吃雞雞","點旁邊那張看看","看屁",
-"看屁","看屁","看屁","吃雞雞","看屁"
-];
+let words=["看屁","一直睡一直睡","我的珍藏都被你看光光了","堅持下去✊","也不是","多點幾次總會中獎的","猜錯了","按看看右邊那張","哈哈哈哈不是這個 再按看看右邊那張😈","嗶嗶嗶啵啵"];
 
 function openPhoto(n){
 document.getElementById("viewer").style.display="flex";
@@ -345,18 +341,16 @@ document.getElementById("card").classList.remove("flip");
 }
 }
 
-/* 💗 愛心（輕量版） */
+/* 💗 愛心 */
 setInterval(()=>{
 let h=document.createElement("div");
+h.className="heart";
 h.innerHTML="❤";
-h.style.position="fixed";
-h.style.top="-20px";
 h.style.left=Math.random()*100+"vw";
-h.style.fontSize=(12+Math.random()*18)+"px";
+h.style.fontSize=(12+Math.random()*20)+"px";
 h.style.opacity=0.6;
 h.style.transform=`rotate(${Math.random()*360}deg)`;
 h.style.animation=`fall ${5+Math.random()*4}s linear`;
-
 document.body.appendChild(h);
 setTimeout(()=>h.remove(),9000);
 },2000);
