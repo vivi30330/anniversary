@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>兩週年快樂</title>
 
 <style>
@@ -11,11 +10,47 @@
 body{
 margin:0;
 font-family:"Microsoft JhengHei";
+background:#000;
 overflow:hidden;
-background:#fff0f5;
+color:white;
 }
 
-/* 手機用滑動 */
+/* 🎬 開場淡入 */
+body.fade-in{
+animation:fadeIn 2s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0}
+to{opacity:1}
+}
+
+/* 背景 */
+
+#bg{
+position:fixed;
+width:100%;
+height:100%;
+background:url("B17AA438-737E-43B7-A170-5A848FE84EAA.jpeg");
+background-size:400px;
+opacity:0.25;
+}
+
+/* 密碼 */
+
+#passwordPage{
+position:fixed;
+width:100%;
+height:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+background:#000;
+z-index:10;
+}
+
+/* 手機滑動 */
 
 #mobileSlider{
 display:none;
@@ -36,7 +71,9 @@ scroll-snap-align:center;
 
 .slide img{
 width:100%;
-border-radius:15px;
+aspect-ratio:3/4;
+object-fit:cover;
+border-radius:12px;
 }
 
 /* 電腦3D */
@@ -48,7 +85,7 @@ top:50%;
 left:50%;
 transform-style:preserve-3d;
 transform:translate(-50%,-50%);
-animation:spin 80s linear infinite;
+animation:spin 90s linear infinite;
 }
 
 @keyframes spin{
@@ -67,7 +104,25 @@ top:-80px;
 .photo img{
 width:100%;
 height:100%;
+object-fit:cover;
 border-radius:10px;
+}
+
+/* 🎬 聚焦背景 */
+
+#overlay{
+position:fixed;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+opacity:0;
+transition:0.5s;
+pointer-events:none;
+z-index:15;
+}
+
+#overlay.show{
+opacity:1;
 }
 
 /* 卡片 */
@@ -77,7 +132,6 @@ display:none;
 position:fixed;
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.8);
 justify-content:center;
 align-items:center;
 z-index:20;
@@ -99,6 +153,8 @@ position:absolute;
 width:100%;
 height:100%;
 backface-visibility:hidden;
+border-radius:12px;
+overflow:hidden;
 }
 
 .front img{
@@ -108,37 +164,56 @@ object-fit:cover;
 }
 
 .back{
-background:white;
+background:#111;
 transform:rotateY(180deg);
 display:flex;
 justify-content:center;
 align-items:center;
 padding:20px;
+text-align:center;
+font-size:18px;
 }
 
-/* 打字機 */
+/* 🎬 字幕打字機 */
 
 #typing{
 position:fixed;
-bottom:20px;
-width:100%;
+bottom:30px;
+width:90%;
+left:5%;
 text-align:center;
 font-size:18px;
-color:#ff4f87;
+color:#fff;
+line-height:1.6;
+letter-spacing:1px;
 }
 
 </style>
 </head>
 
-<body>
+<body class="fade-in">
+
+<div id="bg"></div>
+<div id="overlay"></div>
 
 <audio id="bgm" loop>
 <source src="music.mp3">
 </audio>
 
+<!-- 密碼 -->
+<div id="passwordPage">
+<h2>請輸入密碼進入神奇小空間</h2>
+<input id="password">
+<button onclick="enter()">進入</button>
+</div>
+
+<!-- 手機 -->
 <div id="mobileSlider"></div>
+
+<!-- 電腦 -->
 <div id="carousel"></div>
 
+<!-- 卡片 -->
 <div id="viewer" onclick="closeViewer(event)">
 <div class="card" id="card">
 <div class="front"><img id="photoImg"></div>
@@ -150,38 +225,54 @@ color:#ff4f87;
 
 <script>
 
-/* 音樂 */
-document.body.addEventListener("click",()=>{
-document.getElementById("bgm").play();
-},{once:true});
+/* 🎬 音樂淡入 */
 
-/* 判斷裝置 */
+function playMusic(){
+let m=document.getElementById("bgm");
+m.volume=0;
+m.play().catch(()=>{});
+
+let v=0;
+let fade=setInterval(()=>{
+v+=0.02;
+if(v>=1){v=1;clearInterval(fade);}
+m.volume=v;
+},200);
+}
+
+/* 密碼 */
+
+function enter(){
+if(document.getElementById("password").value==="0828"){
+document.getElementById("passwordPage").style.display="none";
+playMusic();
+start();
+}else{
+alert("密碼錯誤");
+}
+}
+
+/* 啟動 */
+
+function start(){
+
 let isMobile = window.innerWidth < 768;
-
-/* 情話 */
-let words=[
-"看屁","一直睡一直睡","我的珍藏都被你看光光了","堅持下去✊","也不是",
-"多點幾次總會中獎的","猜錯了","按看看右邊那張","哈哈哈哈不是這個 再按看看右邊那張😈","嗶嗶嗶啵啵"
-];
 
 /* 手機 */
 if(isMobile){
-
 let slider=document.getElementById("mobileSlider");
 slider.style.display="block";
 
 for(let i=1;i<=20;i++){
 slider.innerHTML+=`
 <div class="slide" onclick="openPhoto(${i})">
-<img src="${i}.jpg">
+<img src="${i}.jpg" loading="lazy">
 </div>`;
 }
-
 }
 
 /* 電腦 */
 else{
-
 let c=document.getElementById("carousel");
 c.style.display="block";
 
@@ -196,23 +287,40 @@ div.onclick=()=>openPhoto(i);
 div.innerHTML=`<img src="${i}.jpg">`;
 c.appendChild(div);
 }
-
 }
 
-/* 點照片 */
+startTyping();
+}
+
+/* 情話 */
+
+let words=[
+"看屁","一直睡一直睡","我的珍藏都被你看光光了","堅持下去✊","也不是",
+"多點幾次總會中獎的","猜錯了","按看看右邊那張","哈哈哈哈不是這個 再按看看右邊那張😈","嗶嗶嗶啵啵"
+];
+
+/* 打開 */
+
 function openPhoto(n){
+
 document.getElementById("viewer").style.display="flex";
+document.getElementById("overlay").classList.add("show");
+
 document.getElementById("photoImg").src=n+".jpg";
 document.getElementById("message").innerText=words[n-1]||"❤️";
 
 setTimeout(()=>{
 document.getElementById("card").classList.add("flip");
-},300);
+},400);
+
 }
+
+/* 關閉 */
 
 function closeViewer(e){
 if(e.target.id==="viewer"){
 document.getElementById("viewer").style.display="none";
+document.getElementById("overlay").classList.remove("show");
 document.getElementById("card").classList.remove("flip");
 }
 }
@@ -222,15 +330,16 @@ document.getElementById("card").classList.remove("flip");
 let text="兩週年快樂張張 很開心我們又一起度過了一個年頭 請多多指教摟";
 let i=0;
 
+function startTyping(){
 function type(){
 if(i<text.length){
 document.getElementById("typing").innerHTML+=text[i];
 i++;
-setTimeout(type,100);
+setTimeout(type,80);
 }
 }
-
 type();
+}
 
 </script>
 
